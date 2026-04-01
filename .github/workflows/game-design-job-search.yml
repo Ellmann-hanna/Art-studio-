@@ -76,6 +76,7 @@ jobs:
             }
 
       - name: Create GitHub issue with job listings
+        id: create_issue
         uses: actions/github-script@v7
         env:
           TODAY: ${{ steps.date.outputs.today }}
@@ -84,7 +85,7 @@ jobs:
             const fs = require('fs');
             const body  = fs.readFileSync('job_report.md', 'utf8');
             const today = process.env.TODAY;
-            await github.rest.issues.create({
+            const issue = await github.rest.issues.create({
               owner:  context.repo.owner,
               repo:   context.repo.repo,
               title:  `🎮 Game Design Jobs — ${today}`,
@@ -92,3 +93,38 @@ jobs:
               labels: ['job-search'],
             });
             console.log('Job search issue created successfully!');
+            core.setOutput('issue_url', issue.data.html_url);
+
+      - name: Convert report to HTML for email
+        run: |
+          pip install markdown 2>/dev/null
+          python3 - <<'PYEOF'
+          import markdown, pathlib
+          md = pathlib.Path('job_report.md').read_text()
+          html = markdown.markdown(md, extensions=['tables'])
+          wrapped = f"""<!DOCTYPE html><html><head>
+          <meta charset="utf-8">
+          <style>
+            body {{ font-family: Arial, sans-serif; max-width: 860px; margin: 0 auto; padding: 20px; color: #24292e; }}
+            h1 {{ color: #0366d6; }} h2 {{ border-bottom: 1px solid #eee; padding-bottom: 6px; }}
+            h3 {{ color: #24292e; }} a {{ color: #0366d6; }}
+            blockquote {{ background: #f6f8fa; border-left: 4px solid #0366d6; padding: 8px 16px; margin: 4px 0; }}
+            hr {{ border: none; border-top: 1px solid #eee; }}
+          </style></head><body>{html}</body></html>"""
+          pathlib.Path('job_report.html').write_text(wrapped)
+          print("HTML report generated.")
+          PYEOF
+
+      - name: Send email with job listings
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          secure: true
+          username: photosfg872@gmail.com
+          password: ${{ secrets.GMAIL_APP_PASSWORD }}
+          subject: "🎮 Game Design Jobs for Caroline — ${{ steps.date.outputs.today }}"
+          to: photosfg872@gmail.com
+          from: "Caroline's Job Search <photosfg872@gmail.com>"
+          html_body: file://job_report.html
+          ignore_cert: false
