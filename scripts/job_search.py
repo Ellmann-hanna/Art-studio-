@@ -33,7 +33,7 @@ RELEVANT_KEYWORDS = {
     "unreal engine", "unity", "ue5", "ue4", "game dev", "game developer",
 }
 
-# Direct search URLs for major job boards (always included regardless of API)
+# Direct search URLs for major job boards (verified working)
 SEARCH_URLS = {
     "LinkedIn": [
         "https://www.linkedin.com/jobs/search/?keywords=junior+level+designer+game&f_E=1%2C2",
@@ -53,32 +53,31 @@ SEARCH_URLS = {
         "https://hitmarker.net/jobs?q=level+designer&experience=entry-level",
         "https://hitmarker.net/jobs?q=area+designer&experience=entry-level",
     ],
-    "Game Developer (Gamasutra)": [
-        "https://jobs.gamedeveloper.com/jobs?q=level+designer&experience=entry",
-        "https://jobs.gamedeveloper.com/jobs?q=area+designer",
+    "Game Developer Job Board": [
+        "https://www.gamedeveloper.com/jobs",
     ],
     "Remote Game Jobs": [
-        "https://remotegamejobs.com/?s=level+designer",
-        "https://remotegamejobs.com/?s=area+designer",
+        "https://remotegamejobs.com/search?query=level+designer",
+        "https://remotegamejobs.com/search?query=area+designer",
     ],
 }
 
-# Major studio career pages worth checking directly
+# Major studio career pages (verified working)
 STUDIO_CAREER_PAGES = [
-    ("Riot Games",        "https://www.riotgames.com/en/work-with-us/jobs#department=Design"),
-    ("Naughty Dog",       "https://www.naughtydog.com/careers"),
+    ("Riot Games",        "https://www.riotgames.com/en/work-with-us/jobs"),
+    ("Naughty Dog",       "https://www.naughtydog.com/openings"),
     ("Insomniac Games",   "https://insomniac.games/careers/"),
     ("Bungie",            "https://careers.bungie.com/"),
-    ("Epic Games",        "https://www.epicgames.com/site/en-US/careers/jobs?department=Design"),
-    ("Blizzard",          "https://careers.blizzard.com/en-us/openings/?department=Design"),
-    ("EA",                "https://jobs.ea.com/en_US/careers?domain=electronicarts.com"),
-    ("Ubisoft",           "https://www.ubisoft.com/en-us/company/careers/apply"),
-    ("Sony Santa Monica", "https://sonyinteractive.com/en/our-studios/santa-monica-studio/careers"),
-    ("Xbox/Microsoft",    "https://jobs.microsoft.com/en-us/search?q=level+designer"),
-    ("2K Games",          "https://2k.com/en-US/careers/"),
-    ("Bethesda",          "https://jobs.bethesda.net/"),
-    ("CD Projekt Red",    "https://www.cdprojektred.com/en/career"),
-    ("Rockstar Games",    "https://www.rockstargames.com/careers"),
+    ("Epic Games",        "https://www.epicgames.com/site/en-US/careers"),
+    ("Blizzard",          "https://careers.blizzard.com/global/en/game-design"),
+    ("EA",                "https://jobs.ea.com/en_US/careers"),
+    ("Ubisoft",           "https://www.ubisoft.com/en-us/company/careers"),
+    ("Sony Santa Monica", "https://sms.playstation.com/careers"),
+    ("Xbox/Microsoft",    "https://jobs.careers.microsoft.com/us/en/"),
+    ("2K Games",          "https://2k.com/careers/"),
+    ("Bethesda/ZeniMax",  "https://jobs.zenimax.com/"),
+    ("CD Projekt Red",    "https://www.cdprojektred.com/en/jobs"),
+    ("Rockstar Games",    "https://www.rockstargames.com/careers/openings"),
     ("Valve",             "https://www.valvesoftware.com/en/jobs"),
 ]
 
@@ -112,10 +111,8 @@ def score_job(job: dict) -> int:
         job.get("category", {}).get("label", "")
     ).lower()
     score = sum(2 if kw in text else 0 for kw in RELEVANT_KEYWORDS)
-    # Boost for entry-level signals
     if any(w in text for w in ("entry", "junior", "associate", "new grad", "graduate")):
         score += 3
-    # Boost for remote
     if "remote" in text:
         score += 1
     return score
@@ -142,15 +139,15 @@ def format_job(job: dict, idx: int) -> str:
     sal_min  = job.get("salary_min")
     sal_max  = job.get("salary_max")
     if sal_min and sal_max:
-        salary = f" | 💰 ${int(sal_min):,} – ${int(sal_max):,}/yr"
-    remote_flag = " 🌐 Remote" if "remote" in (job.get("title","") + job.get("description","")).lower() else ""
+        salary = f" | \U0001f4b0 ${int(sal_min):,} \u2013 ${int(sal_max):,}/yr"
+    remote_flag = " \U0001f310 Remote" if "remote" in (job.get("title","") + job.get("description","")).lower() else ""
     desc_raw = job.get("description", "")
     desc = desc_raw[:280].replace("\n", " ").strip()
     if len(desc_raw) > 280:
-        desc += "…"
+        desc += "\u2026"
     return (
         f"### {idx}. [{title}]({url})\n"
-        f"**{company}** — {location}{remote_flag}{salary}\n"
+        f"**{company}** \u2014 {location}{remote_flag}{salary}\n"
         f"Posted: {created}\n\n"
         f"> {desc}\n"
     )
@@ -175,8 +172,8 @@ def build_report(top: list, good: list, stretch: list) -> str:
     total = len(top) + len(good) + len(stretch)
 
     lines = [
-        f"# 🎮 Game Design Job Search — {today}",
-        f"**For:** Caroline Zhou | USC Graduate · Master's Student · Level / Area Design Focus",
+        f"# \U0001f3ae Game Design Job Search \u2014 {today}",
+        f"**For:** Caroline Zhou | USC Graduate \u00b7 Master's Student \u00b7 Level / Area Design Focus",
         f"**Total listings found via API:** {total}",
         "",
         "---",
@@ -184,61 +181,56 @@ def build_report(top: list, good: list, stretch: list) -> str:
     ]
 
     if top:
-        lines += ["## ⭐ Top Picks (Best fit for your profile)", ""]
+        lines += ["## \u2b50 Top Picks (Best fit for your profile)", ""]
         for i, j in enumerate(top[:10], 1):
             lines.append(format_job(j, i))
     else:
-        lines += ["## ⭐ Top Picks", "_No strong matches via API today — check board links below._", ""]
+        lines += ["## \u2b50 Top Picks", "_No strong matches via API today \u2014 check board links below._", ""]
 
     if good:
-        lines += ["---", "## ✅ Strong Matches", ""]
+        lines += ["---", "## \u2705 Strong Matches", ""]
         for i, j in enumerate(good[:15], 1):
             lines.append(format_job(j, i))
 
     if stretch:
-        lines += ["---", "## 🚀 Stretch Roles (Slightly senior — worth a shot)", ""]
+        lines += ["---", "## \U0001f680 Stretch Roles (Slightly senior \u2014 worth a shot)", ""]
         for i, j in enumerate(stretch[:8], 1):
             lines.append(format_job(j, i))
 
-    # Always include curated board links
     lines += [
         "---",
-        "## 🔗 Live Job Board Searches — Click to Browse Now",
+        "## \U0001f517 Live Job Board Searches \u2014 Click to Browse Now",
         "",
-        "_These links open pre-configured searches on major job boards. "
-        "Bookmark them or check daily!_",
+        "_These links open pre-configured searches on major job boards._",
         "",
     ]
     for board, urls in SEARCH_URLS.items():
         lines.append(f"### {board}")
         for url in urls:
-            label = url.split("?")[0].split("/")[-1].replace("+", " ").replace("-", " ").title() or "Search"
             lines.append(f"- [{url}]({url})")
         lines.append("")
 
-    # Studio career pages
     lines += [
         "---",
-        "## 🏢 Major Studio Career Pages",
+        "## \U0001f3e2 Major Studio Career Pages",
         "",
-        "Check these directly — big studios often don't post to aggregators:",
+        "Check these directly \u2014 big studios often don't post to aggregators:",
         "",
     ]
     for name, url in STUDIO_CAREER_PAGES:
         lines.append(f"- **[{name}]({url})**")
 
-    # Tips section
     lines += [
         "",
         "---",
-        "## 💡 Tips for Caroline",
+        "## \U0001f4a1 Tips for Caroline",
         "",
         "- **Portfolio first:** Ensure your USC portfolio site is linked in every application.",
-        "- **USC network:** Check Handshake (USC's job platform) for game industry postings exclusive to USC students.",
+        "- **USC network:** Check Handshake (USC\u2019s job platform) for game industry postings exclusive to USC students.",
         "- **Keywords to use:** 'Level Designer', 'Environment Designer', 'World Builder', 'Area Designer', 'Gameplay Designer (Environment)'.",
-        "- **Tools to highlight:** Unreal Engine 5, Unity, Blender, Maya, Houdini, Perforce, Jira — mention any you know.",
-        "- **Remote roles:** Especially worth targeting as a current student — many junior design roles are now remote.",
-        "- **Game jams:** Itch.io, Global Game Jam, Ludum Dare — active participation strengthens your application.",
+        "- **Tools to highlight:** Unreal Engine 5, Unity, Blender, Maya, Houdini, Perforce, Jira \u2014 mention any you know.",
+        "- **Remote roles:** Especially worth targeting as a current student \u2014 many junior design roles are now remote.",
+        "- **Game jams:** Itch.io, Global Game Jam, Ludum Dare \u2014 active participation strengthens your application.",
         "",
         "---",
         f"_Generated automatically on {today}. "
@@ -258,9 +250,9 @@ def main():
             print(f"  Querying: '{query}'")
             results = fetch_adzuna(query)
             all_jobs.extend(results)
-            print(f"    → {len(results)} results")
+            print(f"    \u2192 {len(results)} results")
     else:
-        print("No Adzuna API credentials set — report will include board links only.")
+        print("No Adzuna API credentials set \u2014 report will include board links only.")
         print("Add ADZUNA_APP_ID and ADZUNA_APP_KEY as GitHub secrets for live listings.")
 
     all_jobs = deduplicate(all_jobs)
@@ -269,7 +261,6 @@ def main():
     top, good, stretch = categorize(all_jobs)
     report = build_report(top, good, stretch)
 
-    # Write report to file (GitHub Actions will create an issue from it)
     output_path = os.environ.get("REPORT_PATH", "job_report.md")
     with open(output_path, "w") as f:
         f.write(report)
