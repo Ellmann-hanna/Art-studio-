@@ -1,10 +1,14 @@
 import React, { useState } from 'react';
-import { Upload, Sparkles, Image as ImageIcon, Loader2, AlertCircle } from 'lucide-react';
+import { Upload, Sparkles, Image as ImageIcon, Loader2, AlertCircle, BarChart2 } from 'lucide-react';
 import { generateMemeConcepts } from './services/geminiService';
 import { MemeResponse, MemeConcept } from './types';
 import { MemeDisplay } from './components/MemeDisplay';
+import { TokenStats } from './components/TokenStats';
+
+type View = 'meme' | 'stats';
 
 const App: React.FC = () => {
+  const [view, setView] = useState<View>('meme');
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -56,7 +60,7 @@ const App: React.FC = () => {
     <div className="min-h-screen bg-zinc-950 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-zinc-900 via-zinc-950 to-black text-white p-4 md:p-8 font-sans selection:bg-pink-500 selection:text-white">
       
       {/* Header */}
-      <header className="max-w-4xl mx-auto mb-12 text-center">
+      <header className="max-w-4xl mx-auto mb-8 text-center">
         <div className="inline-flex items-center justify-center p-3 bg-zinc-900 rounded-2xl mb-4 border border-zinc-800 shadow-xl">
            <span className="text-3xl mr-2">🤖</span>
            <h1 className="text-3xl md:text-4xl font-black tracking-tight bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 bg-clip-text text-transparent">
@@ -66,9 +70,39 @@ const App: React.FC = () => {
         <p className="text-zinc-400 text-lg max-w-lg mx-auto">
           Upload any chaotic photo. Our AI roasts you, relates to you, or just gets weird.
         </p>
+
+        {/* Nav tabs */}
+        <div className="flex justify-center mt-6 gap-2">
+          <button
+            onClick={() => setView('meme')}
+            className={`flex items-center gap-2 px-5 py-2 rounded-xl text-sm font-semibold transition-all
+              ${view === 'meme'
+                ? 'bg-zinc-800 text-white border border-zinc-700'
+                : 'text-zinc-500 hover:text-zinc-300'
+              }`}
+          >
+            <span>🎭</span> Meme Generator
+          </button>
+          <button
+            onClick={() => setView('stats')}
+            className={`flex items-center gap-2 px-5 py-2 rounded-xl text-sm font-semibold transition-all
+              ${view === 'stats'
+                ? 'bg-zinc-800 text-white border border-zinc-700'
+                : 'text-zinc-500 hover:text-zinc-300'
+              }`}
+          >
+            <BarChart2 size={14} /> Token Usage Stats
+          </button>
+        </div>
       </header>
 
-      <main className="max-w-4xl mx-auto grid grid-cols-1 lg:grid-cols-[1fr_1.5fr] gap-8">
+      {view === 'stats' && (
+        <main className="max-w-4xl mx-auto">
+          <TokenStats />
+        </main>
+      )}
+
+      {view === 'meme' && <main className="max-w-4xl mx-auto grid grid-cols-1 lg:grid-cols-[1fr_1.5fr] gap-8">
         
         {/* Left Column: Upload & Controls */}
         <div className="space-y-6">
@@ -199,7 +233,8 @@ const App: React.FC = () => {
           )}
         </div>
 
-      </main>
+      </main>}
+
     </div>
   );
 };
