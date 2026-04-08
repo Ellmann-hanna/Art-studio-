@@ -8,7 +8,7 @@ import os
 import json
 import urllib.request
 import urllib.parse
-from datetime import datetime, date
+from datetime import datetime, date, timezone, timedelta
 
 # ── Adzuna API (free tier: https://developer.adzuna.com/) ─────────────────────
 ADZUNA_APP_ID  = os.environ.get("ADZUNA_APP_ID", "")
@@ -86,12 +86,13 @@ def fetch_adzuna(query: str, page: int = 1, results_per_page: int = 20) -> list[
     if not ADZUNA_APP_ID or not ADZUNA_APP_KEY:
         return []
     params = urllib.parse.urlencode({
-        "app_id":          ADZUNA_APP_ID,
-        "app_key":         ADZUNA_APP_KEY,
+        "app_id":           ADZUNA_APP_ID,
+        "app_key":          ADZUNA_APP_KEY,
         "results_per_page": results_per_page,
-        "what":            query,
-        "content-type":    "application/json",
-        "sort_by":         "date",
+        "what":             query,
+        "content-type":     "application/json",
+        "sort_by":          "date",
+        "max_days_old":     1,       # Only return jobs posted in the last 24 hours
     })
     url = f"{ADZUNA_BASE}/{page}?{params}"
     try:
@@ -101,6 +102,27 @@ def fetch_adzuna(query: str, page: int = 1, results_per_page: int = 20) -> list[
     except Exception as e:
         print(f"  [warn] Adzuna fetch failed for '{query}': {e}")
         return []
+
+
+def filter_last_24h(jobs: list[dict]) -> list[dict]:
+    """Secondary filter: drop any job whose 'created' timestamp is older than 24 hours."""
+    cutoff = datetime.now(timezone.utc) - timedelta(hours=24)
+    fresh = []
+    for job in jobs:
+        created_str = job.get("created", "")
+        if not created_str:
+            fresh.append(job)   # No timestamp — keep it, API already filtered
+            continue
+        try:
+            # Adzuna timestamps look like "2026-04-08T10:23:45Z"
+            created_dt = datetime.fromisoformat(created_str.replace("Z", "+00:00"))
+            if created_dt >= cutoff:
+                fresh.append(job)
+            else:
+                print(f"  [filtered] '{job.get('title')}' posted {created_str[:10]} — older than 24h, skipped")
+        except ValueError:
+            fresh.append(job)   # Can't parse timestamp — keep it
+    return fresh
 
 
 def score_job(job: dict) -> int:
@@ -134,7 +156,8 @@ def format_job(job: dict, idx: int) -> str:
     company  = job.get("company", {}).get("display_name", "N/A")
     location = job.get("location", {}).get("display_name", "N/A")
     url      = job.get("redirect_url", "#")
-    created  = job.get("created", "")[:10] if job.get("created") else "N/A"
+    created  = job.get("created", "")
+    posted   = f"{created[:10]} {created[11:16]} UTC" if len(created) >= 16 else created[:10] if created else "N/A"
     salary   = ""
     sal_min  = job.get("salary_min")
     sal_max  = job.get("salary_max")
@@ -148,7 +171,7 @@ def format_job(job: dict, idx: int) -> str:
     return (
         f"### {idx}. [{title}]({url})\n"
         f"**{company}** \u2014 {location}{remote_flag}{salary}\n"
-        f"Posted: {created}\n\n"
+        f"Posted: {posted}\n\n"
         f"> {desc}\n"
     )
 
@@ -172,9 +195,9 @@ def build_report(top: list, good: list, stretch: list) -> str:
     total = len(top) + len(good) + len(stretch)
 
     lines = [
-        f"# \U0001f3ae Game Design Job Search \u2014 {today}",
+        f"# \U0001f3ae Game Design Jobs \u2014 {today}",
         f"**For:** Caroline Zhou | USC Graduate \u00b7 Master's Student \u00b7 Level / Area Design Focus",
-        f"**Total listings found via API:** {total}",
+        f"**Listings from last 24 hours:** {total}",
         "",
         "---",
         "",
@@ -185,7 +208,7 @@ def build_report(top: list, good: list, stretch: list) -> str:
         for i, j in enumerate(top[:10], 1):
             lines.append(format_job(j, i))
     else:
-        lines += ["## \u2b50 Top Picks", "_No strong matches via API today \u2014 check board links below._", ""]
+        lines += ["## \u2b50 Top Picks", "_No new listings in the last 24 hours \u2014 check the board links below for the latest._", ""]
 
     if good:
         lines += ["---", "## \u2705 Strong Matches", ""]
@@ -233,8 +256,7 @@ def build_report(top: list, good: list, stretch: list) -> str:
         "- **Game jams:** Itch.io, Global Game Jam, Ludum Dare \u2014 active participation strengthens your application.",
         "",
         "---",
-        f"_Generated automatically on {today}. "
-        "This issue is created daily to keep job listings current._",
+        f"_Generated automatically on {today}. Only listings posted in the last 24 hours are shown._",
     ]
 
     return "\n".join(lines)
@@ -245,12 +267,16 @@ def main():
     all_jobs: list[dict] = []
 
     if ADZUNA_APP_ID and ADZUNA_APP_KEY:
-        print(f"Searching {len(SEARCH_QUERIES)} queries via Adzuna API...")
+        print(f"Searching {len(SEARCH_QUERIES)} queries via Adzuna API (last 24h only)...")
         for query in SEARCH_QUERIES:
             print(f"  Querying: '{query}'")
             results = fetch_adzuna(query)
             all_jobs.extend(results)
             print(f"    \u2192 {len(results)} results")
+
+        before = len(all_jobs)
+        all_jobs = filter_last_24h(all_jobs)
+        print(f"After 24h filter: {len(all_jobs)} (removed {before - len(all_jobs)} older listings)")
     else:
         print("No Adzuna API credentials set \u2014 report will include board links only.")
         print("Add ADZUNA_APP_ID and ADZUNA_APP_KEY as GitHub secrets for live listings.")
