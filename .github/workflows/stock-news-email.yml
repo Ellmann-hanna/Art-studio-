@@ -59,11 +59,11 @@ jobs:
       - name: Send email with stock news
         uses: dawidd6/action-send-mail@v3
         with:
-          server_address: smtp.gmail.com
-          server_port: 465
-          secure: true
-          username: photosfg872@gmail.com
-          password: ${{ secrets.GMAIL_APP_PASSWORD }}
+          server_address: smtp.sendgrid.net
+          server_port: 587
+          secure: false
+          username: apikey
+          password: ${{ secrets.SENDGRID_API_KEY }}
           subject: "📈 Stock Market News — ${{ steps.date.outputs.today }}"
           to: photosfg872@gmail.com
           from: "Stock News Digest <photosfg872@gmail.com>"
