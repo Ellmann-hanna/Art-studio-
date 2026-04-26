@@ -1,24 +1,108 @@
 import React, { useState, useEffect } from 'react';
 import {
-  Phone, Mail, MapPin, Star, Heart, Clock, Home,
-  CheckCircle, Moon, Menu, X, ChevronDown, PawPrint, Shield, Leaf,
+  Menu, X, Palette, GraduationCap, Mail, Phone, MapPin,
+  Star, Award, Layers, Users, BookOpen, ChevronDown,
+  CheckCircle, ExternalLink, Code2, Gamepad2,
 } from 'lucide-react';
 
-// ─── Image URLs (Unsplash) ────────────────────────────────────────────────────
-const IMG = {
-  hero:      'https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=1920&auto=format&fit=crop&q=85',
-  about:     'https://images.unsplash.com/photo-1576201836106-db1758f5b6f3?w=900&auto=format&fit=crop&q=80',
-  dog1:      'https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=700&auto=format&fit=crop&q=80',
-  dog2:      'https://images.unsplash.com/photo-1534361960057-19f4434a956d?w=700&auto=format&fit=crop&q=80',
-  dog3:      'https://images.unsplash.com/photo-1517849845537-4d257902454a?w=700&auto=format&fit=crop&q=80',
-  dog4:      'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=700&auto=format&fit=crop&q=80',
-  dog5:      'https://images.unsplash.com/photo-1601758228041-f3b2795255f1?w=700&auto=format&fit=crop&q=80',
-  dog6:      'https://images.unsplash.com/photo-1537151608828-ea2b11777ee8?w=700&auto=format&fit=crop&q=80',
-  community: 'https://images.unsplash.com/photo-1449034446853-66c86144b0ad?w=1200&auto=format&fit=crop&q=80',
+// ─── Data ─────────────────────────────────────────────────────────────────────
+
+const SERVICES = [
+  {
+    icon: Palette,
+    title: 'Art Classes',
+    description:
+      'Personalized instruction covering fundamentals through advanced techniques. All skill levels welcome — from complete beginners to students looking to level up.',
+    features: [
+      'Drawing & Illustration',
+      'Digital Art & Design',
+      'Color Theory & Composition',
+      'Character & Environment Art',
+    ],
+    price: 'Starting at $60/hr',
+    cta: 'Book a Lesson',
+  },
+  {
+    icon: GraduationCap,
+    title: 'College Portfolio Coaching',
+    description:
+      'Tailored guidance for high school students building standout portfolios for top art, game design, and interactive media programs.',
+    features: [
+      'Portfolio Review & Critique',
+      'Project Planning & Execution',
+      'Artist Statement Writing',
+      'School Selection Strategy',
+    ],
+    price: 'Starting at $80/hr',
+    cta: 'Get Started',
+  },
+];
+
+const PROJECTS = [
+  {
+    title: 'Unreal Engine 5 Level Design Collection',
+    role: 'Level Designer',
+    period: 'Jan 2024 – Present',
+    description:
+      'A diverse portfolio of levels in UE5 — from detailed flow charts and blockouts to polished 3D geometry. Includes comprehensive playtesting cycles and iterative UX refinements.',
+    tags: ['Unreal Engine 5', 'Level Design', 'Playtesting'],
+    image: 'https://images.unsplash.com/photo-1593508512255-86ab42a8e620?w=800&auto=format&fit=crop&q=80',
+  },
+  {
+    title: 'The WereCleaner',
+    role: 'Level Designer & Level Artist',
+    period: 'June 2023 – May 2024',
+    description:
+      'Award-winning 3D stealth-cleaning sim about a werewolf janitor. Built the complete level blockout and set-dressing in Unity, iterating on layout through multidisciplinary playtests.',
+    tags: ['Unity', 'Level Art', 'Set Dressing', 'Award-Winning'],
+    image: 'https://images.unsplash.com/photo-1556438064-2d7646166914?w=800&auto=format&fit=crop&q=80',
+  },
+  {
+    title: 'Starweave',
+    role: 'Design Lead · Level Designer · Level Artist',
+    period: 'June 2022 – September 2023',
+    description:
+      'A 2.5D narrative squad RPG with novel command-refusal mechanics. Led design on 6+ non-combat maps from concept through final furnishing, coordinating with art and creative directors.',
+    tags: ['Narrative Design', 'Production Pipeline', 'RPG', 'Design Lead'],
+    image: 'https://images.unsplash.com/photo-1614741118887-7a4ee193a5fa?w=800&auto=format&fit=crop&q=80',
+  },
+];
+
+const SKILLS = [
+  { category: 'Game Engines', icon: Gamepad2, items: ['Unreal Engine 5', 'Unity'] },
+  { category: '3D Software', icon: Layers, items: ['Maya', 'Blender'] },
+  { category: 'Scripting', icon: Code2, items: ['Blueprint', 'C++', 'C#', 'Java'] },
+  { category: 'Version Control', icon: ExternalLink, items: ['Perforce', 'GitHub'] },
+];
+
+const EDUCATION = [
+  {
+    degree: 'M.I.T. Digital Game Development',
+    school: 'Southern Methodist University',
+    location: 'Dallas, TX',
+    period: '2025 – 2027 (Expected)',
+    logo: 'SMU',
+  },
+  {
+    degree: 'B.A. Interactive Media & Games',
+    school: 'University of Southern California',
+    location: 'Los Angeles, CA',
+    period: '2020 – 2024',
+    logo: 'USC',
+  },
+];
+
+const FORMSPREE_URL = 'https://formspree.io/f/xreryrrb';
+const CONTACT_INFO = {
+  phone: '510-375-5744',
+  tel: 'tel:+15103755744',
+  email: 'hanguohong111@gmail.com',
+  location: 'Danville, CA 94526',
 };
 
 // ─── Navbar ───────────────────────────────────────────────────────────────────
-const NAV_LINKS = ['About', 'Services', 'Pricing', 'Gallery', 'Community', 'Contact'];
+
+const NAV_LINKS = ['Services', 'Portfolio', 'About', 'Contact'];
 
 const Navbar: React.FC = () => {
   const [open, setOpen] = useState(false);
@@ -30,47 +114,45 @@ const Navbar: React.FC = () => {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  const base = scrolled ? 'text-stone-700' : 'text-white';
-  const navBg = scrolled ? 'bg-white shadow-md' : 'bg-transparent';
+  const textColor = scrolled ? 'text-stone-800' : 'text-white';
+  const navBg = scrolled ? 'bg-white/95 backdrop-blur shadow-md' : 'bg-transparent';
 
   return (
     <nav className={`fixed top-0 inset-x-0 z-50 transition-all duration-300 ${navBg}`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-20">
-        {/* Logo */}
         <a href="#" className="flex items-center gap-2.5">
-          <PawPrint size={28} className="text-amber-500" />
+          <Palette size={26} className="text-violet-500" />
           <div className="leading-tight">
-            <div className={`font-display text-xl font-bold ${base}`}>Danville Doggy</div>
-            <div className={`text-xs font-medium ${scrolled ? 'text-amber-500' : 'text-amber-300'}`}>Boarding & Care</div>
+            <div className={`font-display text-xl font-bold ${textColor}`}>Art Studio</div>
+            <div className={`text-xs font-medium ${scrolled ? 'text-violet-500' : 'text-violet-300'}`}>
+              Danville, CA
+            </div>
           </div>
         </a>
 
-        {/* Desktop links */}
         <div className="hidden md:flex items-center gap-8">
           {NAV_LINKS.map(l => (
             <a
               key={l}
               href={`#${l.toLowerCase()}`}
-              className={`text-sm font-medium hover:text-amber-500 transition-colors ${base}`}
+              className={`text-sm font-medium hover:text-violet-500 transition-colors ${textColor}`}
             >
               {l}
             </a>
           ))}
           <a
             href="#contact"
-            className="bg-amber-500 hover:bg-amber-600 text-white px-5 py-2.5 rounded-full text-sm font-semibold transition-colors shadow-lg shadow-amber-500/25"
+            className="bg-violet-600 hover:bg-violet-700 text-white px-5 py-2.5 rounded-full text-sm font-semibold transition-colors shadow-lg shadow-violet-500/25"
           >
-            Book a Stay
+            Book a Session
           </a>
         </div>
 
-        {/* Mobile hamburger */}
-        <button onClick={() => setOpen(p => !p)} className={`md:hidden ${base}`} aria-label="Toggle menu">
+        <button onClick={() => setOpen(p => !p)} className={`md:hidden ${textColor}`} aria-label="Toggle menu">
           {open ? <X size={24} /> : <Menu size={24} />}
         </button>
       </div>
 
-      {/* Mobile menu */}
       {open && (
         <div className="md:hidden bg-white border-t border-stone-100 shadow-xl">
           <div className="px-4 py-5 space-y-2">
@@ -79,7 +161,7 @@ const Navbar: React.FC = () => {
                 key={l}
                 href={`#${l.toLowerCase()}`}
                 onClick={() => setOpen(false)}
-                className="block py-2 text-stone-700 font-medium hover:text-amber-500 transition-colors"
+                className="block py-2 text-stone-700 font-medium hover:text-violet-600 transition-colors"
               >
                 {l}
               </a>
@@ -87,9 +169,9 @@ const Navbar: React.FC = () => {
             <a
               href="#contact"
               onClick={() => setOpen(false)}
-              className="block mt-3 bg-amber-500 text-white text-center py-3 rounded-full font-semibold"
+              className="block mt-3 bg-violet-600 text-white text-center py-3 rounded-full font-semibold"
             >
-              Book a Stay
+              Book a Session
             </a>
           </div>
         </div>
@@ -99,55 +181,54 @@ const Navbar: React.FC = () => {
 };
 
 // ─── Hero ─────────────────────────────────────────────────────────────────────
+
 const Hero: React.FC = () => (
   <section className="relative flex items-center justify-center min-h-screen overflow-hidden">
-    {/* Background image */}
     <div
-      className="absolute inset-0 bg-cover bg-center bg-no-repeat scale-105"
-      style={{ backgroundImage: `url(${IMG.hero})` }}
+      className="absolute inset-0 bg-cover bg-center scale-105"
+      style={{
+        backgroundImage:
+          'url(https://images.unsplash.com/photo-1513364776144-60967b0f800f?w=1920&auto=format&fit=crop&q=85)',
+      }}
     />
-    {/* Gradient overlay */}
-    <div className="absolute inset-0 bg-gradient-to-b from-black/65 via-black/45 to-black/70" />
+    <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-black/75" />
 
     <div className="relative z-10 text-center text-white px-4 max-w-4xl mx-auto">
-      {/* Stars */}
-      <div className="flex justify-center gap-1 mb-6">
-        {[...Array(5)].map((_, i) => (
-          <Star key={i} size={20} className="text-amber-400 fill-amber-400" />
-        ))}
+      <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur border border-white/20 rounded-full px-5 py-2 text-sm font-medium mb-8">
+        <Star size={14} className="text-amber-400 fill-amber-400" />
+        USC & SMU Trained · Game Design & Digital Art
       </div>
 
       <h1 className="font-display text-5xl sm:text-6xl md:text-7xl font-bold mb-5 leading-tight drop-shadow-lg">
-        A Home Away<br />From Home
+        Unlock Your<br />
+        <span className="text-violet-400">Creative Potential</span>
       </h1>
       <p className="text-xl md:text-2xl text-white/85 font-light mb-3">
-        Premium dog boarding in the heart of{' '}
-        <span className="text-amber-400 font-semibold">Danville, California</span>
+        Expert art instruction & college portfolio coaching
       </p>
       <p className="text-base md:text-lg text-white/70 mb-10 max-w-2xl mx-auto">
-        Intimate care for up to 3 dogs — three daily walks, cozy overnight stays,
-        and all the love your pup deserves.
+        One-on-one lessons tailored to your goals — from beginner art fundamentals
+        to standout portfolios for top universities.
       </p>
 
       <div className="flex flex-col sm:flex-row gap-4 justify-center">
         <a
           href="#contact"
-          className="bg-amber-500 hover:bg-amber-600 text-white px-8 py-4 rounded-full font-semibold text-lg transition-all hover:shadow-2xl hover:-translate-y-0.5 shadow-lg"
+          className="bg-violet-600 hover:bg-violet-700 text-white px-8 py-4 rounded-full font-semibold text-lg transition-all hover:-translate-y-0.5 hover:shadow-2xl shadow-lg"
         >
-          Book a Stay
+          Book a Free Consultation
         </a>
         <a
-          href="#about"
-          className="bg-white/15 hover:bg-white/25 backdrop-blur-sm border border-white/30 text-white px-8 py-4 rounded-full font-semibold text-lg transition-all"
+          href="#services"
+          className="bg-white/15 hover:bg-white/25 backdrop-blur border border-white/30 text-white px-8 py-4 rounded-full font-semibold text-lg transition-all"
         >
-          Learn More
+          Explore Services
         </a>
       </div>
     </div>
 
-    {/* Scroll indicator */}
     <a
-      href="#about"
+      href="#services"
       className="absolute bottom-8 left-1/2 -translate-x-1/2 text-white/50 hover:text-white animate-bounce transition-colors"
     >
       <ChevronDown size={32} />
@@ -155,141 +236,72 @@ const Hero: React.FC = () => (
   </section>
 );
 
-// ─── About ────────────────────────────────────────────────────────────────────
-const About: React.FC = () => (
-  <section id="about" className="py-24 md:py-32 bg-amber-50">
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+// ─── Stats Bar ────────────────────────────────────────────────────────────────
 
-        {/* Image column */}
-        <div className="relative">
-          <div className="rounded-3xl overflow-hidden shadow-2xl">
-            <img
-              src={IMG.about}
-              alt="Cozy single-family home in Danville, CA"
-              className="w-full h-96 lg:h-[520px] object-cover"
-            />
-          </div>
-          {/* Floating badge */}
-          <div className="absolute -bottom-6 -right-4 bg-white rounded-2xl p-5 shadow-xl max-w-[200px]">
-            <div className="flex items-center gap-2 mb-1.5">
-              <PawPrint size={18} className="text-amber-500" />
-              <span className="font-bold text-stone-800 text-sm">Max 3 Dogs</span>
-            </div>
-            <p className="text-xs text-stone-500 leading-snug">
-              Small group means personal attention for every pup
-            </p>
-          </div>
+const StatsBar: React.FC = () => (
+  <div className="bg-violet-700 text-white py-10">
+    <div className="max-w-5xl mx-auto px-4 grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+      {[
+        { value: '2', label: 'Degrees in Game Design' },
+        { value: '3+', label: 'Shipped Game Projects' },
+        { value: '1-on-1', label: 'Personalized Lessons' },
+        { value: '100%', label: 'Passion-Driven Teaching' },
+      ].map(s => (
+        <div key={s.label}>
+          <div className="text-3xl font-bold font-display mb-1">{s.value}</div>
+          <div className="text-violet-200 text-sm">{s.label}</div>
         </div>
-
-        {/* Text column */}
-        <div>
-          <div className="flex items-center gap-2 mb-4">
-            <div className="h-px w-8 bg-amber-400" />
-            <span className="text-amber-600 font-semibold text-sm uppercase tracking-widest">Our Story</span>
-          </div>
-          <h2 className="font-display text-4xl md:text-5xl font-bold text-stone-800 mb-6 leading-tight">
-            Where Every Dog<br />Feels at Home
-          </h2>
-          <p className="text-stone-600 text-lg leading-relaxed mb-5">
-            Nestled in a beautiful single-family home in Danville, California, we offer a warm,
-            loving environment for your beloved pets. Our home is more than just a boarding
-            facility — it's a second home where your dog is treated as family.
-          </p>
-          <p className="text-stone-600 text-lg leading-relaxed mb-10">
-            We deliberately limit stays to a maximum of <strong className="text-stone-800">3 dogs at a time</strong>,
-            so every pup receives the individual attention, love, and care they deserve.
-            No kennels, no cages — just cozy beds, a spacious fenced yard, and plenty of cuddles.
-          </p>
-
-          {/* Stats */}
-          <div className="grid grid-cols-3 gap-4">
-            {[
-              { num: '3',  label: 'Max Dogs',    Icon: PawPrint },
-              { num: '3×', label: 'Daily Walks', Icon: Heart },
-              { num: '5★', label: 'Top Rated',   Icon: Star },
-            ].map(({ num, label, Icon }) => (
-              <div key={label} className="bg-white rounded-2xl p-4 text-center shadow-sm">
-                <Icon size={20} className="mx-auto mb-2 text-amber-500" />
-                <div className="font-display text-2xl font-bold text-stone-800">{num}</div>
-                <div className="text-xs text-stone-500 mt-0.5">{label}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
+      ))}
     </div>
-  </section>
+  </div>
 );
 
 // ─── Services ─────────────────────────────────────────────────────────────────
-const SERVICES = [
-  {
-    Icon: PawPrint,
-    title: 'Small Group Boarding',
-    desc: 'Maximum 3 dogs at a time so your pup always gets personal attention in a calm, stress-free home.',
-    accent: 'bg-amber-50 text-amber-600 group-hover:bg-amber-100',
-  },
-  {
-    Icon: Heart,
-    title: '3 Daily Walks',
-    desc: 'Every dog enjoys three daily walks through Danville\'s beautiful trails and parks — morning, midday, and evening.',
-    accent: 'bg-rose-50 text-rose-600 group-hover:bg-rose-100',
-  },
-  {
-    Icon: Moon,
-    title: 'Overnight Boarding',
-    desc: 'Comfortable overnight stays inside our warm home. Dogs sleep safely with room to stretch, relax, and dream.',
-    accent: 'bg-indigo-50 text-indigo-600 group-hover:bg-indigo-100',
-  },
-  {
-    Icon: Home,
-    title: 'True Home Environment',
-    desc: 'A real single-family home, not a kennel. Your dog gets living spaces, a backyard, and all the comforts of home.',
-    accent: 'bg-emerald-50 text-emerald-600 group-hover:bg-emerald-100',
-  },
-  {
-    Icon: Shield,
-    title: 'Safe & Fully Fenced',
-    desc: 'Secure, fully fenced yard with no escape routes. Your pet\'s safety is always our top priority.',
-    accent: 'bg-blue-50 text-blue-600 group-hover:bg-blue-100',
-  },
-  {
-    Icon: Clock,
-    title: 'Daily Photo Updates',
-    desc: 'We send photos and texts every day so you can see exactly how much fun your pup is having while you\'re away.',
-    accent: 'bg-violet-50 text-violet-600 group-hover:bg-violet-100',
-  },
-];
 
 const Services: React.FC = () => (
-  <section id="services" className="py-24 md:py-32 bg-white">
+  <section id="services" className="py-24 md:py-32 bg-stone-50">
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div className="text-center mb-16">
-        <div className="flex items-center justify-center gap-2 mb-4">
-          <div className="h-px w-8 bg-amber-400" />
-          <span className="text-amber-600 font-semibold text-sm uppercase tracking-widest">What We Offer</span>
-          <div className="h-px w-8 bg-amber-400" />
-        </div>
-        <h2 className="font-display text-4xl md:text-5xl font-bold text-stone-800 mb-4">
-          Everything Your Pup Needs
+        <span className="inline-block bg-violet-100 text-violet-700 text-xs font-semibold tracking-widest uppercase px-4 py-1.5 rounded-full mb-4">
+          What I Offer
+        </span>
+        <h2 className="font-display text-4xl md:text-5xl font-bold text-stone-900 mb-4">
+          Services
         </h2>
-        <p className="text-stone-500 text-lg max-w-2xl mx-auto">
-          We go above and beyond to make sure every dog in our care is happy, healthy, and loved.
+        <p className="text-stone-500 max-w-xl mx-auto text-lg">
+          Whether you're picking up a pencil for the first time or applying to your dream school,
+          there's a path for you.
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {SERVICES.map(({ Icon, title, desc, accent }) => (
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+        {SERVICES.map(s => (
           <div
-            key={title}
-            className="group p-8 rounded-3xl border border-stone-100 hover:border-amber-200 hover:shadow-xl transition-all duration-300 cursor-default"
+            key={s.title}
+            className="bg-white rounded-3xl p-8 shadow-sm border border-stone-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
           >
-            <div className={`inline-flex p-3 rounded-2xl mb-5 transition-colors ${accent}`}>
-              <Icon size={24} />
+            <div className="w-14 h-14 bg-violet-100 rounded-2xl flex items-center justify-center mb-6">
+              <s.icon size={26} className="text-violet-600" />
             </div>
-            <h3 className="font-display text-xl font-bold text-stone-800 mb-3">{title}</h3>
-            <p className="text-stone-500 leading-relaxed">{desc}</p>
+            <h3 className="text-2xl font-bold text-stone-900 mb-3">{s.title}</h3>
+            <p className="text-stone-500 mb-6 leading-relaxed">{s.description}</p>
+            <ul className="space-y-2.5 mb-8">
+              {s.features.map(f => (
+                <li key={f} className="flex items-center gap-2.5 text-stone-600 text-sm">
+                  <CheckCircle size={15} className="text-violet-500 shrink-0" />
+                  {f}
+                </li>
+              ))}
+            </ul>
+            <div className="flex items-center justify-between pt-6 border-t border-stone-100">
+              <span className="text-violet-700 font-bold text-lg">{s.price}</span>
+              <a
+                href="#contact"
+                className="bg-violet-600 hover:bg-violet-700 text-white px-5 py-2.5 rounded-full text-sm font-semibold transition-colors"
+              >
+                {s.cta}
+              </a>
+            </div>
           </div>
         ))}
       </div>
@@ -297,117 +309,58 @@ const Services: React.FC = () => (
   </section>
 );
 
-// ─── Pricing ──────────────────────────────────────────────────────────────────
-const INCLUDES = [
-  '3 daily walks (morning, midday & evening)',
-  'All meals included — or bring your own food',
-  'Cozy sleeping area inside the home',
-  'Daily photo & text updates',
-  'Secure fenced backyard playtime',
-  'Individual attention and lots of cuddles',
-];
+// ─── Portfolio ────────────────────────────────────────────────────────────────
 
-const Pricing: React.FC = () => (
-  <section id="pricing" className="py-24 md:py-32 bg-stone-900">
+const Portfolio: React.FC = () => (
+  <section id="portfolio" className="py-24 md:py-32 bg-white">
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div className="text-center mb-16">
-        <div className="flex items-center justify-center gap-2 mb-4">
-          <div className="h-px w-8 bg-amber-500" />
-          <span className="text-amber-400 font-semibold text-sm uppercase tracking-widest">Transparent Pricing</span>
-          <div className="h-px w-8 bg-amber-500" />
-        </div>
-        <h2 className="font-display text-4xl md:text-5xl font-bold text-white mb-4">
-          Simple, Fair Pricing
+        <span className="inline-block bg-violet-100 text-violet-700 text-xs font-semibold tracking-widest uppercase px-4 py-1.5 rounded-full mb-4">
+          Featured Work
+        </span>
+        <h2 className="font-display text-4xl md:text-5xl font-bold text-stone-900 mb-4">
+          Game Design Portfolio
         </h2>
-        <p className="text-stone-400 text-lg max-w-2xl mx-auto">
-          No hidden fees. Everything your dog needs — included.
+        <p className="text-stone-500 max-w-xl mx-auto text-lg">
+          Professional game projects that inform every lesson — real industry experience
+          brought into the classroom.
         </p>
       </div>
 
-      <div className="max-w-md mx-auto space-y-6">
-        {/* Main pricing card */}
-        <div className="bg-gradient-to-br from-amber-500 to-amber-600 rounded-3xl p-8 text-white shadow-2xl shadow-amber-900/40">
-          <div className="flex items-center gap-3 mb-6">
-            <Moon size={22} />
-            <h3 className="font-display text-2xl font-bold">Standard Overnight Stay</h3>
-          </div>
-
-          <div className="flex items-baseline gap-2 mb-1">
-            <span className="text-7xl font-black tracking-tight">$70</span>
-            <span className="text-amber-200 text-xl">/ night</span>
-          </div>
-          <p className="text-amber-200 text-sm mb-8">Per dog · Max 3 dogs total · 7 days a week</p>
-
-          <div className="space-y-3.5 mb-8">
-            {INCLUDES.map(item => (
-              <div key={item} className="flex items-start gap-3">
-                <CheckCircle size={17} className="text-amber-200 mt-0.5 shrink-0" />
-                <span className="text-amber-50 text-sm leading-snug">{item}</span>
-              </div>
-            ))}
-          </div>
-
-          <a
-            href="#contact"
-            className="block bg-white text-amber-600 text-center py-4 rounded-2xl font-bold text-lg hover:bg-amber-50 transition-colors shadow-lg"
-          >
-            Book Your Dog's Stay
-          </a>
-        </div>
-
-        {/* Multi-dog note */}
-        <div className="bg-stone-800 rounded-2xl p-5 text-center border border-stone-700">
-          <p className="text-stone-300 text-sm">
-            <span className="text-amber-400 font-semibold">Multi-dog discount:</span>{' '}
-            $10 off per night for a second dog from the same family.
-          </p>
-        </div>
-      </div>
-    </div>
-  </section>
-);
-
-// ─── Gallery ──────────────────────────────────────────────────────────────────
-const DOGS = [
-  { src: IMG.dog1, alt: 'Two happy dogs playing together',  tall: true  },
-  { src: IMG.dog2, alt: 'Adorable puppy close-up',          tall: false },
-  { src: IMG.dog3, alt: 'Smiling golden dog outdoors',      tall: false },
-  { src: IMG.dog4, alt: 'Sweet dog portrait',               tall: false },
-  { src: IMG.dog5, alt: 'Dog on a sunny morning walk',      tall: false },
-  { src: IMG.dog6, alt: 'Playful pup in the grass',         tall: false },
-];
-
-const Gallery: React.FC = () => (
-  <section id="gallery" className="py-24 md:py-32 bg-amber-50">
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div className="text-center mb-16">
-        <div className="flex items-center justify-center gap-2 mb-4">
-          <div className="h-px w-8 bg-amber-400" />
-          <span className="text-amber-600 font-semibold text-sm uppercase tracking-widest">Happy Pups</span>
-          <div className="h-px w-8 bg-amber-400" />
-        </div>
-        <h2 className="font-display text-4xl md:text-5xl font-bold text-stone-800 mb-4">
-          Our Furry Guests
-        </h2>
-        <p className="text-stone-500 text-lg max-w-2xl mx-auto">
-          Every dog leaves here happy, loved, and ready to come back!
-        </p>
-      </div>
-
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-        {DOGS.map(({ src, alt, tall }, i) => (
+      <div className="space-y-12">
+        {PROJECTS.map((p, i) => (
           <div
-            key={i}
-            className={`relative overflow-hidden rounded-3xl group ${tall ? 'row-span-2' : ''}`}
+            key={p.title}
+            className={`grid grid-cols-1 lg:grid-cols-2 gap-10 items-center ${
+              i % 2 === 1 ? 'lg:flex-row-reverse' : ''
+            }`}
           >
-            <img
-              src={src}
-              alt={alt}
-              className={`w-full object-cover group-hover:scale-105 transition-transform duration-500 ${
-                tall ? 'h-full min-h-[500px]' : 'h-52 md:h-64'
-              }`}
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+            <div className={i % 2 === 1 ? 'lg:order-2' : ''}>
+              <div className="rounded-3xl overflow-hidden shadow-xl">
+                <img
+                  src={p.image}
+                  alt={p.title}
+                  className="w-full h-72 object-cover hover:scale-105 transition-transform duration-500"
+                />
+              </div>
+            </div>
+            <div className={i % 2 === 1 ? 'lg:order-1' : ''}>
+              <div className="flex flex-wrap gap-2 mb-4">
+                {p.tags.map(t => (
+                  <span
+                    key={t}
+                    className="bg-violet-100 text-violet-700 text-xs font-semibold px-3 py-1 rounded-full"
+                  >
+                    {t}
+                  </span>
+                ))}
+              </div>
+              <h3 className="text-2xl font-bold text-stone-900 mb-1">{p.title}</h3>
+              <p className="text-violet-600 font-medium text-sm mb-4">
+                {p.role} · {p.period}
+              </p>
+              <p className="text-stone-500 leading-relaxed">{p.description}</p>
+            </div>
           </div>
         ))}
       </div>
@@ -415,72 +368,97 @@ const Gallery: React.FC = () => (
   </section>
 );
 
-// ─── Community ────────────────────────────────────────────────────────────────
-const COMMUNITY_HIGHLIGHTS = [
-  { Icon: Leaf,    title: 'Iron Horse Trail',       desc: 'Scenic paved trail along the creek' },
-  { Icon: MapPin,  title: 'Sycamore Valley Park',   desc: 'Beautiful park for off-leash play' },
-  { Icon: Heart,   title: 'Friendly Neighborhood',  desc: 'Safe, quiet, tree-lined streets' },
-  { Icon: Star,    title: 'Pet-Friendly Town',       desc: 'Danville loves its four-legged residents' },
-];
+// ─── About ────────────────────────────────────────────────────────────────────
 
-const Community: React.FC = () => (
-  <section id="community" className="py-24 md:py-32 bg-white overflow-hidden">
+const About: React.FC = () => (
+  <section id="about" className="py-24 md:py-32 bg-stone-50">
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-
-        {/* Text */}
         <div>
-          <div className="flex items-center gap-2 mb-4">
-            <div className="h-px w-8 bg-amber-400" />
-            <span className="text-amber-600 font-semibold text-sm uppercase tracking-widest">The Danville Difference</span>
-          </div>
-          <h2 className="font-display text-4xl md:text-5xl font-bold text-stone-800 mb-6 leading-tight">
-            Beautiful Danville,<br />California
+          <span className="inline-block bg-violet-100 text-violet-700 text-xs font-semibold tracking-widest uppercase px-4 py-1.5 rounded-full mb-6">
+            About the Instructor
+          </span>
+          <h2 className="font-display text-4xl md:text-5xl font-bold text-stone-900 mb-6 leading-tight">
+            Creativity Meets<br />Technical Craft
           </h2>
-          <p className="text-stone-600 text-lg leading-relaxed mb-5">
-            Danville is one of the San Francisco Bay Area's most charming communities — a small
-            town nestled at the foot of Mount Diablo, with scenic trails, lush parks,
-            and a warm, welcoming neighborhood feel that dogs absolutely love.
+          <p className="text-stone-500 leading-relaxed mb-6 text-lg">
+            I'm a game designer and digital artist with a B.A. in Interactive Media & Games
+            from USC and a Master's in Digital Game Development from SMU. I've shipped
+            award-winning games and led design teams — and I bring that professional
+            perspective into every lesson.
           </p>
-          <p className="text-stone-600 text-lg leading-relaxed mb-10">
-            Your dog will enjoy exploring the beautiful green spaces nearby, from the
-            tree-lined Iron Horse Trail to the open fields of Sycamore Valley Park.
-            Our neighborhood is safe, quiet, and perfect for leisurely walks.
+          <p className="text-stone-500 leading-relaxed mb-8">
+            My passion is helping students discover their creative voice. Whether you want
+            to learn to draw, break into game design, or build a portfolio that gets you
+            into your dream school, I'll meet you exactly where you are.
           </p>
 
-          <div className="grid grid-cols-2 gap-4">
-            {COMMUNITY_HIGHLIGHTS.map(({ Icon, title, desc }) => (
-              <div key={title} className="flex items-start gap-3 p-4 bg-amber-50 rounded-2xl">
-                <div className="p-2 bg-amber-100 rounded-xl shrink-0">
-                  <Icon size={16} className="text-amber-600" />
+          {/* Education */}
+          <div className="space-y-4 mb-8">
+            {EDUCATION.map(e => (
+              <div
+                key={e.school}
+                className="flex items-start gap-4 bg-white rounded-2xl p-4 border border-stone-100 shadow-sm"
+              >
+                <div className="w-12 h-12 rounded-xl bg-violet-700 flex items-center justify-center text-white font-bold text-sm shrink-0">
+                  {e.logo}
                 </div>
                 <div>
-                  <div className="font-semibold text-stone-800 text-sm">{title}</div>
-                  <div className="text-xs text-stone-500 mt-0.5">{desc}</div>
+                  <div className="font-semibold text-stone-800 text-sm">{e.degree}</div>
+                  <div className="text-stone-500 text-xs">{e.school} · {e.location}</div>
+                  <div className="text-violet-500 text-xs font-medium">{e.period}</div>
                 </div>
               </div>
             ))}
           </div>
         </div>
 
-        {/* Image */}
-        <div className="relative">
-          <div className="rounded-3xl overflow-hidden shadow-2xl">
-            <img
-              src={IMG.community}
-              alt="Beautiful Danville California neighborhood"
-              className="w-full h-[500px] object-cover"
-            />
-          </div>
-          {/* Location badge */}
-          <div className="absolute -bottom-4 -left-4 bg-white rounded-2xl p-4 shadow-xl">
-            <div className="flex items-center gap-2.5">
-              <MapPin size={18} className="text-amber-500 shrink-0" />
-              <div>
-                <div className="font-bold text-stone-800 text-sm">Danville, CA 94526</div>
-                <div className="text-xs text-stone-500">San Ramon Valley</div>
-              </div>
+        {/* Skills */}
+        <div>
+          <div className="bg-white rounded-3xl p-8 border border-stone-100 shadow-sm mb-6">
+            <h3 className="font-bold text-stone-900 mb-6 flex items-center gap-2">
+              <Award size={18} className="text-violet-600" /> Technical Skills
+            </h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              {SKILLS.map(s => (
+                <div key={s.category}>
+                  <div className="flex items-center gap-2 mb-2">
+                    <s.icon size={14} className="text-violet-500" />
+                    <span className="text-xs font-semibold text-stone-400 uppercase tracking-wide">
+                      {s.category}
+                    </span>
+                  </div>
+                  <div className="flex flex-wrap gap-1.5">
+                    {s.items.map(item => (
+                      <span
+                        key={item}
+                        className="bg-stone-100 text-stone-700 text-xs px-2.5 py-1 rounded-lg font-medium"
+                      >
+                        {item}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              ))}
             </div>
+          </div>
+
+          <div className="grid grid-cols-3 gap-4">
+            {[
+              { icon: BookOpen, label: 'USC & SMU\nEducated' },
+              { icon: Users, label: 'Award-Winning\nProjects' },
+              { icon: Star, label: '1-on-1\nInstruction' },
+            ].map(c => (
+              <div
+                key={c.label}
+                className="bg-violet-700 text-white rounded-2xl p-4 text-center"
+              >
+                <c.icon size={22} className="mx-auto mb-2 text-violet-200" />
+                <div className="text-xs font-medium leading-tight whitespace-pre-line text-violet-100">
+                  {c.label}
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </div>
@@ -489,153 +467,168 @@ const Community: React.FC = () => (
 );
 
 // ─── Contact ──────────────────────────────────────────────────────────────────
-type FormState = {
-  name: string; email: string; phone: string;
-  dogName: string; breed: string; dates: string; message: string;
-};
-
-const CONTACT_INFO = [
-  { Icon: Phone,  label: 'Phone',               value: '(925) 555-0142',        href: 'tel:+19255550142' },
-  { Icon: Mail,   label: 'Email',               value: 'hello@danvilledoggy.com', href: 'mailto:hello@danvilledoggy.com' },
-  { Icon: MapPin, label: 'Location',            value: 'Danville, CA 94526',    href: null },
-  { Icon: Clock,  label: 'Check-in / Check-out', value: '8 AM – 6 PM, 7 days a week', href: null },
-];
-
-const FORM_FIELDS: { label: string; key: keyof FormState; placeholder: string; type: string }[] = [
-  { label: 'Your Name',    key: 'name',    placeholder: 'Jane Smith',       type: 'text'  },
-  { label: 'Email',        key: 'email',   placeholder: 'jane@email.com',   type: 'email' },
-  { label: 'Phone',        key: 'phone',   placeholder: '(925) 555-0000',   type: 'tel'   },
-  { label: "Dog's Name",   key: 'dogName', placeholder: 'Buddy',            type: 'text'  },
-  { label: 'Breed',        key: 'breed',   placeholder: 'Golden Retriever', type: 'text'  },
-  { label: 'Dates Needed', key: 'dates',   placeholder: 'May 15 – May 18',  type: 'text'  },
-];
 
 const Contact: React.FC = () => {
-  const [form, setForm] = useState<FormState>({
-    name: '', email: '', phone: '', dogName: '', breed: '', dates: '', message: '',
-  });
-  const [submitted, setSubmitted] = useState(false);
+  const [status, setStatus] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle');
 
-  const set = (key: keyof FormState) =>
-    (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
-      setForm(f => ({ ...f, [key]: e.target.value }));
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setStatus('sending');
+    const form = e.currentTarget;
+    try {
+      const res = await fetch(FORMSPREE_URL, {
+        method: 'POST',
+        body: new FormData(form),
+        headers: { Accept: 'application/json' },
+      });
+      if (res.ok) {
+        setStatus('sent');
+        form.reset();
+      } else {
+        setStatus('error');
+      }
+    } catch {
+      setStatus('error');
+    }
+  };
 
   return (
-    <section id="contact" className="py-24 md:py-32 bg-amber-50">
+    <section id="contact" className="py-24 md:py-32 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-16">
-          <div className="flex items-center justify-center gap-2 mb-4">
-            <div className="h-px w-8 bg-amber-400" />
-            <span className="text-amber-600 font-semibold text-sm uppercase tracking-widest">Get In Touch</span>
-            <div className="h-px w-8 bg-amber-400" />
-          </div>
-          <h2 className="font-display text-4xl md:text-5xl font-bold text-stone-800 mb-4">
-            Book Your Dog's Stay
-          </h2>
-          <p className="text-stone-500 text-lg max-w-2xl mx-auto">
-            Ready to book or have a question? We'd love to hear from you!
-          </p>
-        </div>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
+          <div>
+            <span className="inline-block bg-violet-100 text-violet-700 text-xs font-semibold tracking-widest uppercase px-4 py-1.5 rounded-full mb-6">
+              Get in Touch
+            </span>
+            <h2 className="font-display text-4xl md:text-5xl font-bold text-stone-900 mb-6 leading-tight">
+              Let's Start Your<br />Creative Journey
+            </h2>
+            <p className="text-stone-500 text-lg leading-relaxed mb-10">
+              Book a free 30-minute consultation. We'll talk about your goals,
+              current skill level, and how to build a plan that works for you.
+            </p>
 
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-12">
-
-          {/* Left: contact info + testimonial */}
-          <div className="lg:col-span-2 space-y-8">
-            <div>
-              <h3 className="font-display text-2xl font-bold text-stone-800 mb-6">
-                Contact Information
-              </h3>
-              <div className="space-y-5">
-                {CONTACT_INFO.map(({ Icon, label, value, href }) => (
-                  <div key={label} className="flex items-start gap-4">
-                    <div className="p-3 bg-amber-100 rounded-xl shrink-0">
-                      <Icon size={18} className="text-amber-600" />
-                    </div>
-                    <div>
-                      <div className="text-xs text-stone-400 uppercase tracking-wider font-medium mb-1">
-                        {label}
-                      </div>
-                      {href ? (
-                        <a href={href} className="text-stone-700 font-semibold hover:text-amber-600 transition-colors">
-                          {value}
-                        </a>
-                      ) : (
-                        <span className="text-stone-700 font-semibold">{value}</span>
-                      )}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Testimonial */}
-            <div className="bg-white rounded-3xl p-6 shadow-sm">
-              <div className="flex gap-1 mb-3">
-                {[...Array(5)].map((_, i) => (
-                  <Star key={i} size={15} className="text-amber-400 fill-amber-400" />
-                ))}
-              </div>
-              <p className="text-stone-600 italic text-sm leading-relaxed mb-4">
-                "Our golden retriever absolutely loves staying here. She comes home so happy
-                and well-exercised. Best boarding we've ever used — we can't recommend it enough!"
-              </p>
-              <div className="text-sm font-semibold text-stone-800">— Sarah M., Danville</div>
-            </div>
-          </div>
-
-          {/* Right: form */}
-          <div className="lg:col-span-3">
-            {submitted ? (
-              <div className="bg-white rounded-3xl p-10 shadow-sm h-full flex flex-col items-center justify-center text-center min-h-[420px]">
-                <div className="p-4 bg-amber-100 rounded-full mb-6">
-                  <CheckCircle size={40} className="text-amber-600" />
+            <div className="space-y-5">
+              <a
+                href={CONTACT_INFO.tel}
+                className="flex items-center gap-4 group"
+              >
+                <div className="w-12 h-12 bg-violet-100 rounded-2xl flex items-center justify-center group-hover:bg-violet-600 transition-colors">
+                  <Phone size={18} className="text-violet-600 group-hover:text-white transition-colors" />
                 </div>
-                <h3 className="font-display text-2xl font-bold text-stone-800 mb-3">Message Received!</h3>
-                <p className="text-stone-500 text-lg max-w-sm">
-                  Thank you! We'll get back to you within 24 hours to confirm availability
-                  and chat about your dog's stay.
+                <div>
+                  <div className="text-xs text-stone-400 font-medium">Phone</div>
+                  <div className="text-stone-800 font-semibold">{CONTACT_INFO.phone}</div>
+                </div>
+              </a>
+
+              <a
+                href={`mailto:${CONTACT_INFO.email}`}
+                className="flex items-center gap-4 group"
+              >
+                <div className="w-12 h-12 bg-violet-100 rounded-2xl flex items-center justify-center group-hover:bg-violet-600 transition-colors">
+                  <Mail size={18} className="text-violet-600 group-hover:text-white transition-colors" />
+                </div>
+                <div>
+                  <div className="text-xs text-stone-400 font-medium">Email</div>
+                  <div className="text-stone-800 font-semibold">{CONTACT_INFO.email}</div>
+                </div>
+              </a>
+
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 bg-violet-100 rounded-2xl flex items-center justify-center">
+                  <MapPin size={18} className="text-violet-600" />
+                </div>
+                <div>
+                  <div className="text-xs text-stone-400 font-medium">Location</div>
+                  <div className="text-stone-800 font-semibold">{CONTACT_INFO.location}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-stone-50 rounded-3xl p-8 border border-stone-100">
+            {status === 'sent' ? (
+              <div className="h-full flex flex-col items-center justify-center text-center py-12">
+                <CheckCircle size={52} className="text-violet-500 mb-4" />
+                <h3 className="text-2xl font-bold text-stone-900 mb-2">Message Sent!</h3>
+                <p className="text-stone-500">
+                  Thanks for reaching out — I'll be in touch within 24 hours.
                 </p>
               </div>
             ) : (
-              <form
-                onSubmit={e => { e.preventDefault(); setSubmitted(true); }}
-                className="bg-white rounded-3xl p-8 shadow-sm space-y-5"
-              >
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                  {FORM_FIELDS.map(({ label, key, placeholder, type }) => (
-                    <div key={key}>
-                      <label className="block text-xs font-semibold text-stone-400 uppercase tracking-wider mb-2">
-                        {label}
-                      </label>
-                      <input
-                        type={type}
-                        placeholder={placeholder}
-                        value={form[key]}
-                        onChange={set(key)}
-                        className="w-full px-4 py-3 border border-stone-200 rounded-xl text-stone-700 placeholder-stone-300 focus:outline-none focus:ring-2 focus:ring-amber-300 focus:border-transparent transition-all text-sm"
-                      />
-                    </div>
-                  ))}
+              <form onSubmit={handleSubmit} className="space-y-5">
+                <h3 className="text-xl font-bold text-stone-900 mb-6">Book a Free Consultation</h3>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-stone-700 mb-1.5">First Name</label>
+                    <input
+                      type="text"
+                      name="firstName"
+                      required
+                      className="w-full border border-stone-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-violet-400 bg-white"
+                      placeholder="Jane"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-stone-700 mb-1.5">Last Name</label>
+                    <input
+                      type="text"
+                      name="lastName"
+                      required
+                      className="w-full border border-stone-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-violet-400 bg-white"
+                      placeholder="Smith"
+                    />
+                  </div>
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-stone-400 uppercase tracking-wider mb-2">
-                    Additional Notes
-                  </label>
-                  <textarea
-                    rows={4}
-                    placeholder="Tell us about your dog's personality, dietary needs, medications, or anything else we should know…"
-                    value={form.message}
-                    onChange={set('message')}
-                    className="w-full px-4 py-3 border border-stone-200 rounded-xl text-stone-700 placeholder-stone-300 focus:outline-none focus:ring-2 focus:ring-amber-300 focus:border-transparent transition-all resize-none text-sm"
+                  <label className="block text-sm font-medium text-stone-700 mb-1.5">Email</label>
+                  <input
+                    type="email"
+                    name="email"
+                    required
+                    className="w-full border border-stone-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-violet-400 bg-white"
+                    placeholder="jane@example.com"
                   />
                 </div>
 
+                <div>
+                  <label className="block text-sm font-medium text-stone-700 mb-1.5">Service Interest</label>
+                  <select
+                    name="service"
+                    required
+                    className="w-full border border-stone-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-violet-400 bg-white"
+                  >
+                    <option value="">Select a service...</option>
+                    <option value="art-classes">Art Classes</option>
+                    <option value="portfolio-coaching">College Portfolio Coaching</option>
+                    <option value="both">Both</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-stone-700 mb-1.5">Tell me about your goals</label>
+                  <textarea
+                    name="message"
+                    rows={4}
+                    required
+                    className="w-full border border-stone-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-violet-400 bg-white resize-none"
+                    placeholder="Current skill level, target schools, timeline, anything else..."
+                  />
+                </div>
+
+                {status === 'error' && (
+                  <p className="text-red-500 text-sm">Something went wrong. Please try emailing directly.</p>
+                )}
+
                 <button
                   type="submit"
-                  className="w-full bg-amber-500 hover:bg-amber-600 text-white py-4 rounded-2xl font-bold text-lg transition-all hover:shadow-lg"
+                  disabled={status === 'sending'}
+                  className="w-full bg-violet-600 hover:bg-violet-700 disabled:opacity-60 text-white py-3.5 rounded-xl font-semibold text-sm transition-colors"
                 >
-                  Send Message & Check Availability
+                  {status === 'sending' ? 'Sending…' : 'Send Message'}
                 </button>
               </form>
             )}
@@ -647,54 +640,40 @@ const Contact: React.FC = () => {
 };
 
 // ─── Footer ───────────────────────────────────────────────────────────────────
+
 const Footer: React.FC = () => (
-  <footer className="bg-stone-900 text-stone-400 py-12">
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div className="flex flex-col md:flex-row justify-between items-center gap-8">
-        {/* Brand */}
-        <div className="flex items-center gap-3">
-          <PawPrint size={24} className="text-amber-500" />
-          <div>
-            <div className="font-display font-bold text-white">Danville Doggy Boarding</div>
-            <div className="text-xs text-stone-500">Danville, California 94526</div>
-          </div>
-        </div>
-
-        {/* Links */}
-        <div className="flex flex-wrap justify-center gap-6 text-sm">
-          {NAV_LINKS.map(l => (
-            <a key={l} href={`#${l.toLowerCase()}`} className="hover:text-amber-400 transition-colors">
-              {l}
-            </a>
-          ))}
-        </div>
-
-        {/* Copyright */}
-        <div className="text-xs text-stone-500 text-center">
-          © {new Date().getFullYear()} Danville Doggy Boarding
-          <br />
-          Made with{' '}
-          <Heart size={11} className="inline text-rose-400 fill-rose-400" />{' '}
-          in Danville, CA
-        </div>
+  <footer className="bg-stone-900 text-stone-400 py-10">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-4">
+      <div className="flex items-center gap-2">
+        <Palette size={20} className="text-violet-400" />
+        <span className="text-white font-semibold">Art Studio · Danville, CA</span>
+      </div>
+      <p className="text-sm">© {new Date().getFullYear()} Art Studio. All rights reserved.</p>
+      <div className="flex gap-6 text-sm">
+        <a href={`mailto:${CONTACT_INFO.email}`} className="hover:text-white transition-colors">
+          {CONTACT_INFO.email}
+        </a>
+        <a href={CONTACT_INFO.tel} className="hover:text-white transition-colors">
+          {CONTACT_INFO.phone}
+        </a>
       </div>
     </div>
   </footer>
 );
 
-// ─── Root ─────────────────────────────────────────────────────────────────────
-const App: React.FC = () => (
-  <div className="font-sans">
-    <Navbar />
-    <Hero />
-    <About />
-    <Services />
-    <Pricing />
-    <Gallery />
-    <Community />
-    <Contact />
-    <Footer />
-  </div>
-);
+// ─── App ──────────────────────────────────────────────────────────────────────
 
-export default App;
+export default function App() {
+  return (
+    <div className="font-sans">
+      <Navbar />
+      <Hero />
+      <StatsBar />
+      <Services />
+      <Portfolio />
+      <About />
+      <Contact />
+      <Footer />
+    </div>
+  );
+}
