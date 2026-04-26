@@ -57,7 +57,7 @@ const PROJECTS = [
     description:
       'Award-winning 3D stealth-cleaning sim about a werewolf janitor. Built the complete level blockout and set-dressing in Unity, iterating on layout through multidisciplinary playtests.',
     tags: ['Unity', 'Level Art', 'Set Dressing', 'Award-Winning'],
-    image: 'https://images.unsplash.com/photo-1556438064-2d7646166914?w=800&auto=format&fit=crop&q=80',
+    image: 'https://img.youtube.com/vi/UXZ7PWtJC0c/maxresdefault.jpg',
     link: 'https://www.youtube.com/watch?v=UXZ7PWtJC0c&t=1s',
     linkLabel: 'Watch Trailer',
   },
@@ -68,7 +68,7 @@ const PROJECTS = [
     description:
       'A 2.5D narrative squad RPG with novel command-refusal mechanics. Led design on 6+ non-combat maps from concept through final furnishing, coordinating with art and creative directors.',
     tags: ['Narrative Design', 'Production Pipeline', 'RPG', 'Design Lead'],
-    image: 'https://images.unsplash.com/photo-1614741118887-7a4ee193a5fa?w=800&auto=format&fit=crop&q=80',
+    image: 'https://img.youtube.com/vi/MBxScfVponM/maxresdefault.jpg',
     link: 'https://www.youtube.com/watch?v=MBxScfVponM&t=8s',
     linkLabel: 'Watch Trailer',
   },
