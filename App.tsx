@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import {
-  Menu, X, Palette, GraduationCap, Mail, Phone, MapPin,
+  Menu, X, Palette, GraduationCap, Mail, MapPin,
   Star, Award, Layers, Users, BookOpen, ChevronDown,
   CheckCircle, ExternalLink, Code2, Gamepad2,
 } from 'lucide-react';
@@ -44,9 +44,11 @@ const PROJECTS = [
     role: 'Level Designer',
     period: 'Jan 2024 – Present',
     description:
-      'A diverse portfolio of levels in UE5 — from detailed flow charts and blockouts to polished 3D geometry. Includes comprehensive playtesting cycles and iterative UX refinements.',
+      'A collection of 3D levels made in Unreal Engine 5 — from detailed flow charts and blockouts to polished 3D geometry. Includes comprehensive playtesting cycles and iterative UX refinements.',
     tags: ['Unreal Engine 5', 'Level Design', 'Playtesting'],
-    image: 'https://images.unsplash.com/photo-1593508512255-86ab42a8e620?w=800&auto=format&fit=crop&q=80',
+    image: 'https://img.youtube.com/vi/isKXBcJgDtc/maxresdefault.jpg',
+    link: 'https://www.youtube.com/watch?v=isKXBcJgDtc',
+    linkLabel: 'Watch Video',
   },
   {
     title: 'The WereCleaner',
@@ -56,6 +58,8 @@ const PROJECTS = [
       'Award-winning 3D stealth-cleaning sim about a werewolf janitor. Built the complete level blockout and set-dressing in Unity, iterating on layout through multidisciplinary playtests.',
     tags: ['Unity', 'Level Art', 'Set Dressing', 'Award-Winning'],
     image: 'https://images.unsplash.com/photo-1556438064-2d7646166914?w=800&auto=format&fit=crop&q=80',
+    link: 'https://www.youtube.com/watch?v=UXZ7PWtJC0c&t=1s',
+    linkLabel: 'Watch Trailer',
   },
   {
     title: 'Starweave',
@@ -65,6 +69,43 @@ const PROJECTS = [
       'A 2.5D narrative squad RPG with novel command-refusal mechanics. Led design on 6+ non-combat maps from concept through final furnishing, coordinating with art and creative directors.',
     tags: ['Narrative Design', 'Production Pipeline', 'RPG', 'Design Lead'],
     image: 'https://images.unsplash.com/photo-1614741118887-7a4ee193a5fa?w=800&auto=format&fit=crop&q=80',
+    link: 'https://www.youtube.com/watch?v=MBxScfVponM&t=8s',
+    linkLabel: 'Watch Trailer',
+  },
+];
+
+const OTHER_PROJECTS = [
+  {
+    title: 'Run Me Up',
+    role: 'Level Designer, Level Artist',
+    description: 'A custom level made for Half-Life 2 in Hammer editor.',
+    image: 'https://img.youtube.com/vi/QcBdJLpNS60/maxresdefault.jpg',
+    link: 'https://www.youtube.com/watch?v=QcBdJLpNS60&t=1s',
+    linkLabel: 'Watch Video',
+  },
+  {
+    title: 'Shade Shift',
+    role: 'Level Designer, Programmer',
+    description: '2D platformer where each level consists of two shades of maps.',
+    image: 'https://img.youtube.com/vi/HYXiAuuzzfw/maxresdefault.jpg',
+    link: 'https://www.youtube.com/watch?v=HYXiAuuzzfw&t=1s',
+    linkLabel: 'Watch Video',
+  },
+  {
+    title: 'Super Soul Angel',
+    role: 'Designer, Artist',
+    description: '3D third-person action shooter — shoot demons and grapple to avoid them.',
+    image: 'https://img.youtube.com/vi/RMC9C5U8YM4/maxresdefault.jpg',
+    link: 'https://www.youtube.com/watch?v=RMC9C5U8YM4&t=1s',
+    linkLabel: 'Watch Trailer',
+  },
+  {
+    title: 'Fly Cook',
+    role: 'Developer',
+    description: 'An indie game available on itch.io.',
+    image: 'https://images.unsplash.com/photo-1556438064-2d7646166914?w=800&auto=format&fit=crop&q=80',
+    link: 'https://aylishtime.itch.io/fly-cook',
+    linkLabel: 'Play on itch.io',
   },
 ];
 
@@ -94,10 +135,9 @@ const EDUCATION = [
 
 const FORMSPREE_URL = 'https://formspree.io/f/xreryrrb';
 const CONTACT_INFO = {
-  phone: '510-375-5744',
-  tel: 'tel:+15103755744',
-  email: 'hanguohong111@gmail.com',
-  location: 'Danville, CA 94526',
+  email: 'carolinelzhou@gmail.com',
+  linkedin: 'https://www.linkedin.com/in/carolinelzhou/',
+  location: 'Danville, CA',
 };
 
 // ─── Navbar ───────────────────────────────────────────────────────────────────
@@ -359,10 +399,49 @@ const Portfolio: React.FC = () => (
               <p className="text-violet-600 font-medium text-sm mb-4">
                 {p.role} · {p.period}
               </p>
-              <p className="text-stone-500 leading-relaxed">{p.description}</p>
+              <p className="text-stone-500 leading-relaxed mb-5">{p.description}</p>
+              {'link' in p && p.link && (
+                <a
+                  href={p.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 bg-violet-600 hover:bg-violet-700 text-white px-5 py-2.5 rounded-full text-sm font-semibold transition-colors"
+                >
+                  <ExternalLink size={14} />
+                  {(p as any).linkLabel}
+                </a>
+              )}
             </div>
           </div>
         ))}
+      </div>
+
+      {/* Other Projects grid */}
+      <div className="mt-20">
+        <h3 className="font-display text-2xl font-bold text-stone-900 text-center mb-10">Other Projects</h3>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {OTHER_PROJECTS.map(p => (
+            <div key={p.title} className="bg-stone-50 rounded-2xl overflow-hidden border border-stone-100 hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+              <div className="relative overflow-hidden">
+                <img src={p.image} alt={p.title} className="w-full h-44 object-cover hover:scale-105 transition-transform duration-500" />
+              </div>
+              <div className="p-5">
+                <h4 className="font-bold text-stone-900 mb-1">{p.title}</h4>
+                <p className="text-violet-600 text-xs font-medium mb-2">{p.role}</p>
+                <p className="text-stone-500 text-sm mb-4 leading-relaxed">{p.description}</p>
+                <a
+                  href={p.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 text-violet-600 hover:text-violet-800 text-sm font-semibold transition-colors"
+                >
+                  <ExternalLink size={13} />
+                  {p.linkLabel}
+                </a>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   </section>
@@ -378,19 +457,20 @@ const About: React.FC = () => (
           <span className="inline-block bg-violet-100 text-violet-700 text-xs font-semibold tracking-widest uppercase px-4 py-1.5 rounded-full mb-6">
             About the Instructor
           </span>
-          <h2 className="font-display text-4xl md:text-5xl font-bold text-stone-900 mb-6 leading-tight">
-            Creativity Meets<br />Technical Craft
+          <h2 className="font-display text-4xl md:text-5xl font-bold text-stone-900 mb-2 leading-tight">
+            Caroline "Taro" Zhou
           </h2>
+          <p className="text-violet-600 font-semibold mb-6">Level Designer & Level Artist</p>
           <p className="text-stone-500 leading-relaxed mb-6 text-lg">
-            I'm a game designer and digital artist with a B.A. in Interactive Media & Games
-            from USC and a Master's in Digital Game Development from SMU. I've shipped
-            award-winning games and led design teams — and I bring that professional
-            perspective into every lesson.
+            Hi, I'm Caroline Zhou, also known by my nickname, Taro. I'm a recent graduate
+            from the University of Southern California where I received my B.A. in
+            Interactive Media and Game Design (USC IMGD). I am currently pursuing an
+            M.I.T in Game Development at SMU (Guildhall).
           </p>
           <p className="text-stone-500 leading-relaxed mb-8">
-            My passion is helping students discover their creative voice. Whether you want
-            to learn to draw, break into game design, or build a portfolio that gets you
-            into your dream school, I'll meet you exactly where you are.
+            I'm drawn to creating games with emotional aspects to them, be it comedic and
+            humorous or deep and heartfelt — the feel of the game. By focusing on player
+            experience, I hope to bring a positive impact to players through my levels.
           </p>
 
           {/* Education */}
@@ -510,19 +590,6 @@ const Contact: React.FC = () => {
 
             <div className="space-y-5">
               <a
-                href={CONTACT_INFO.tel}
-                className="flex items-center gap-4 group"
-              >
-                <div className="w-12 h-12 bg-violet-100 rounded-2xl flex items-center justify-center group-hover:bg-violet-600 transition-colors">
-                  <Phone size={18} className="text-violet-600 group-hover:text-white transition-colors" />
-                </div>
-                <div>
-                  <div className="text-xs text-stone-400 font-medium">Phone</div>
-                  <div className="text-stone-800 font-semibold">{CONTACT_INFO.phone}</div>
-                </div>
-              </a>
-
-              <a
                 href={`mailto:${CONTACT_INFO.email}`}
                 className="flex items-center gap-4 group"
               >
@@ -532,6 +599,21 @@ const Contact: React.FC = () => {
                 <div>
                   <div className="text-xs text-stone-400 font-medium">Email</div>
                   <div className="text-stone-800 font-semibold">{CONTACT_INFO.email}</div>
+                </div>
+              </a>
+
+              <a
+                href={CONTACT_INFO.linkedin}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-4 group"
+              >
+                <div className="w-12 h-12 bg-violet-100 rounded-2xl flex items-center justify-center group-hover:bg-violet-600 transition-colors">
+                  <ExternalLink size={18} className="text-violet-600 group-hover:text-white transition-colors" />
+                </div>
+                <div>
+                  <div className="text-xs text-stone-400 font-medium">LinkedIn</div>
+                  <div className="text-stone-800 font-semibold">linkedin.com/in/carolinelzhou</div>
                 </div>
               </a>
 
@@ -653,8 +735,8 @@ const Footer: React.FC = () => (
         <a href={`mailto:${CONTACT_INFO.email}`} className="hover:text-white transition-colors">
           {CONTACT_INFO.email}
         </a>
-        <a href={CONTACT_INFO.tel} className="hover:text-white transition-colors">
-          {CONTACT_INFO.phone}
+        <a href={CONTACT_INFO.linkedin} target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">
+          LinkedIn
         </a>
       </div>
     </div>
